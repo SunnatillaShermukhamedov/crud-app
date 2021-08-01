@@ -5,7 +5,7 @@ import { useUsers } from '../../api/users';
 
 const Users = () => {
   const { data: users, isSuccess: usersLoaded } = useUsers();
-  return usersLoaded ? <Table data={users} /> : 'loading...';
+  return usersLoaded ? <Table data={users} /> : <div>loading...</div>;
 };
 
 export default Users;

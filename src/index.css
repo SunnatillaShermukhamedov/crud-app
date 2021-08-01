@@ -12,3 +12,7 @@ code {
     monospace;
   justify-content: space-between;
 }
+
+body.modal-open {
+  overflow: hidden;
+}
