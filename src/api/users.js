@@ -28,6 +28,16 @@ export const updateUser = async (fields) => {
   return res.json();
 };
 
+export const deleteUser = async (id) => {
+  const res = await fetch(`${urls.apiUrl}/api/v1/users/${id}`, {
+    method: 'delete',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return res.json();
+};
+
 export const createUser = async (fields) => {
   const res = await fetch(`${urls.apiUrl}/api/v1/users`, {
     method: 'post',
@@ -97,6 +107,29 @@ export const useManageUser = () => {
     },
     [mutate],
   );
+  const onDeleteUser = useCallback(
+    (id, onComplete) => {
+      const func = deleteUser(id);
+      const onSuccess = (data, invalidator) => {
+        const transaction = invalidator.mutate(Read.Users(), null, (data) => {
+          const index = data.findIndex((item) => item.id === id);
+          if (data[index]) {
+            const clone = cloneDeep(data);
+            clone.splice(index, 1);
+            return clone;
+          }
+          return null;
+        });
+        transaction.commit();
+      };
+      mutate({
+        mutationFn: func,
+        onSuccess,
+        onComplete,
+      });
+    },
+    [mutate],
+  );
 
   const onCreateUser = useCallback(
     (fields, onComplete) => {
@@ -117,7 +150,8 @@ export const useManageUser = () => {
     () => ({
       update: onUpdateUser,
       create: onCreateUser,
+      delete: onDeleteUser,
     }),
-    [onUpdateUser, onCreateUser],
+    [onUpdateUser, onCreateUser, onDeleteUser],
   );
 };

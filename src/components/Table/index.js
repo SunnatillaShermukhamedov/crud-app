@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 import format from 'date-fns/format';
 
 import Row from './Row';
-import palette from '../../styles/palette';
 import Button from '../Button';
 import Paragraph from '../Paragraph';
 import UserFormModal from '../../containers/UserFormModal';
+import UserDeleteModal from '../../containers/UserDeleteModal';
+
+import palette from '../../styles/palette';
 
 const StyledTable = styled.table`
   height: 60vh;
@@ -16,8 +18,11 @@ const StyledTable = styled.table`
 `;
 
 const Table = ({ data }) => {
-  const [editProfile, setProfile] = useState(false);
-  const openEditModal = useCallback((profile) => setProfile(profile), []);
+  const [editProfile, setEditProfile] = useState(false);
+  const openEditModal = useCallback((profile) => setEditProfile(profile), []);
+
+  const [deleteProfile, setDeleteProfile] = useState(false);
+  const openDeleteModal = useCallback((profile) => setDeleteProfile(profile), []);
 
   return (
     <>
@@ -52,6 +57,7 @@ const Table = ({ data }) => {
                     title="Del"
                     size="small"
                     $margin="0 5px 0 5px"
+                    onClick={openDeleteModal.bind(null, profile)}
                   ></Button>
                 </Paragraph>
               </td>
@@ -63,8 +69,15 @@ const Table = ({ data }) => {
       {editProfile && (
         <UserFormModal
           title="Edit user"
-          closeModal={() => setProfile(false)}
+          closeModal={() => setEditProfile(false)}
           profile={editProfile}
+        />
+      )}
+      {deleteProfile && (
+        <UserDeleteModal
+          title="Delete user"
+          closeModal={() => setDeleteProfile(false)}
+          profile={deleteProfile}
         />
       )}
     </>
